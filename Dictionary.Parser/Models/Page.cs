@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dictionary.Domain.Models;
 using Dictionary.Parser.Helpers;
 using Dictionary.Parser.Models.Abstract;
 using HtmlAgilityPack;
@@ -53,6 +54,16 @@ namespace Dictionary.Parser.Models
             NextLetterPageLink = index != letterLinks.Count - 1 ? 
                 letterLinks[index + 1].GetAttributeValue("href", null) : 
                 null;
+        }
+
+        public Word ParseWord(string page)
+        {
+            if (string.IsNullOrEmpty(page))
+            {
+                throw new ArgumentNullException(nameof(page));
+            }
+
+            return null;
         }
     }
 }

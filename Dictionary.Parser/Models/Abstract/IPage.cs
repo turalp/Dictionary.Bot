@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dictionary.Domain.Models;
 
 namespace Dictionary.Parser.Models.Abstract
 {
@@ -11,5 +12,7 @@ namespace Dictionary.Parser.Models.Abstract
         ICollection<string> WordsLinks { get; set; }
 
         void Parse(string page);
+
+        Word ParseWord(string page);
     }
 }

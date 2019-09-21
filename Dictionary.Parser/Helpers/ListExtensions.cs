@@ -19,6 +19,19 @@ namespace Dictionary.Parser.Helpers
             }
         }
 
+        public static void Add<T>(this ICollection<T> list, ICollection<T> collection)
+        {
+            if (!IsValidCollection(list) && !IsValidCollection(collection))
+            {
+                throw new ArgumentException("Collections are not valid.");
+            }
+
+            foreach (T item in collection)
+            {
+                list.Add(item);
+            }
+        }
+
         private static bool IsValidCollection<T>(ICollection<T> collection)
         {
             if (collection == null || collection.Count == 0)
