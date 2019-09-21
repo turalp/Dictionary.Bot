@@ -38,22 +38,21 @@ namespace Dictionary.Parser.Models
 
             HtmlNodeCollection links = document
                 .DocumentNode
-                .SelectNodes("(//div[contains(@style, 'margin-bottom:1em')]//a[0]/@href)");
+                .SelectNodes("(//div[contains(@style, 'margin-bottom:1em')]//a[1])");
             WordsLinks.Add(links);
 
             HtmlNode nextPageLink = document
                 .DocumentNode
-                .SelectSingleNode("(//div[contains(@style, 'float:right')]//a[0]/@href)");
-            NextPageLink = nextPageLink.ToString();
+                .SelectSingleNode("(//div[contains(@style, 'float:right')]//a[1])");
+            NextPageLink = nextPageLink.GetAttributeValue("href", null);
 
             HtmlNodeCollection letterLinks = document
                 .DocumentNode
                 .SelectNodes("(//a[contains(@class, 'dict letter big')])");
             int index = letterLinks.GetNodeIndex(letterLinks.FirstOrDefault(l => l.HasClass("active")));
-            if (index != letterLinks.Count - 1)
-            {
-                NextLetterPageLink = letterLinks[index + 1].GetAttributeValue("href", null);
-            }
+            NextLetterPageLink = index != letterLinks.Count - 1 ? 
+                letterLinks[index + 1].GetAttributeValue("href", null) : 
+                null;
         }
     }
 }

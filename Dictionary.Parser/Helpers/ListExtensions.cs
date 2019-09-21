@@ -15,7 +15,7 @@ namespace Dictionary.Parser.Helpers
 
             foreach (HtmlNode node in collection)
             {
-                list.Add(node.ToString());
+                list.Add(node.Attributes["href"].Value);
             }
         }
 
