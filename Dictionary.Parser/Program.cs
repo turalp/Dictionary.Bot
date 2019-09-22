@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Net.Http;
 using Dictionary.Domain.Models;
+using Dictionary.Domain.Repositories;
 using Dictionary.Parser.Helpers;
 using Dictionary.Parser.Models;
 using Dictionary.Parser.Models.Abstract;
@@ -16,7 +17,7 @@ namespace Dictionary.Parser
 
         internal static void Main(string[] args)
         {
-            Console.WriteLine("STARTING Parser tool...");
+            Console.WriteLine("STARTING Parser...");
 
             _page = new Page();
             string domain = ConfigurationManager.AppSettings["Domain"];
@@ -45,13 +46,17 @@ namespace Dictionary.Parser
 
                 foreach (string link in links)
                 {
-                    pageMarkup = _httpClient
-                        .GetStringAsync(domain + link)
-                        .Result;
-                    Word word = _page.ParseWord(pageMarkup);
+                    using (var repository = new DictionaryRepository())
+                    {
+                        pageMarkup = _httpClient
+                            .GetStringAsync(domain + link)
+                            .Result;
+                        Word word = _page.ParseWord(pageMarkup);
+                        repository.InsertAsync(word).GetAwaiter().GetResult();
+                    }
                 }
 
-                Console.WriteLine("Parser tool was FINISHED successfully.");
+                Console.WriteLine("Parser was FINISHED successfully.");
                 Console.ReadKey();
             }
         }

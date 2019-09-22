@@ -63,7 +63,25 @@ namespace Dictionary.Parser.Models
                 throw new ArgumentNullException(nameof(page));
             }
 
-            return null;
+            Word result = new Word();
+
+            HtmlDocument document = new HtmlDocument();
+            document.LoadHtml(page);
+
+            HtmlNode word = document
+                .DocumentNode
+                .SelectSingleNode("(//div[contains(@itemprop, 'articleBody')]//h1[1])");
+            result.Title = word.InnerText;
+
+            HtmlNode description = document
+                .DocumentNode
+                .SelectSingleNode("(//div[contains(@itemprop, 'articleBody')])");
+            result.Description = description.InnerText
+                .Replace("\r\n", "")
+                .Replace("  ", "")
+                .Substring(word.InnerText.Length + 1);
+
+            return result;
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
+using Dictionary.Domain.Models;
 using Dictionary.Parser.Models;
 using Dictionary.Parser.Models.Abstract;
-using HtmlAgilityPack;
 using NUnit.Framework;
 
 namespace Dictionary.Tests
@@ -11,21 +11,25 @@ namespace Dictionary.Tests
     public class PageTests
     {
         private readonly IPage _page = new Page();
-        private string _htmlMarkup;
+        private string _fHtmlMarkup;
+        private string _sHtmlMarkup;
 
         [SetUp]
         public void SetUp()
         {
-            _htmlMarkup = File.ReadAllText(
+            _fHtmlMarkup = File.ReadAllText(
                 Path.Combine(
-                    @"C:\Users\Tural\source\repos\Dictionary.Bot\Dictionary.Tests", "Files", "page.html"));
+                    @"C:\Users\Tural\source\repos\Dictionary.Bot\Dictionary.Tests", "Files", "page1.html"));
+            _sHtmlMarkup = File.ReadAllText(
+                Path.Combine(
+                    @"C:\Users\Tural\source\repos\Dictionary.Bot\Dictionary.Tests", "Files", "page2.html"));
         }
 
         [Test]
         public void Parse()
         {
             // Act
-            _page.Parse(_htmlMarkup);
+            _page.Parse(_fHtmlMarkup);
 
             // Assert
             Assert.That(_page.WordsLinks, Has.Count.GreaterThan(0));
@@ -38,6 +42,23 @@ namespace Dictionary.Tests
         {
             Assert.That(() => _page.Parse(null), Throws.TypeOf<ArgumentNullException>());
             Assert.That(() => _page.Parse(""), Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public void ParseWord()
+        {
+            //Act
+            Word result = _page.ParseWord(_sHtmlMarkup);
+
+            Assert.That(result.Title, Is.Not.Null);
+            Assert.That(result.Description, Is.Not.Null);
+        }
+
+        [Test]
+        public void ParseWord_WhenParameterNullOrEmpty_ShouldThrowException()
+        {
+            Assert.That(() => _page.ParseWord(null), Throws.TypeOf<ArgumentNullException>());
+            Assert.That(() => _page.ParseWord(""), Throws.TypeOf<ArgumentNullException>());
         }
     }
 }
