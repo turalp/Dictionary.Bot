@@ -1,11 +1,9 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Dictionary.Domain.Models
 {
     public class Word
     {
-        [Key]
         public Guid WordId { get; set; }
         
         public string Title { get; set; }
@@ -14,7 +12,7 @@ namespace Dictionary.Domain.Models
 
         public override string ToString()
         {
-            return $"{Title} - {Description}";
+            return $"{Title}, {Description}";
         }
     }
 }

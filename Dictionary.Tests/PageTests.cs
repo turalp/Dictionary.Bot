@@ -19,7 +19,7 @@ namespace Dictionary.Tests
         {
             _fHtmlMarkup = File.ReadAllText(
                 Path.Combine(
-                    @"C:\Users\Tural\source\repos\Dictionary.Bot\Dictionary.Tests", "Files", "page1.html"));
+                    @"C:\Users\Tural\source\repos\Dictionary.Bot\Dictionary.Tests", "Files", "page3.html"));
             _sHtmlMarkup = File.ReadAllText(
                 Path.Combine(
                     @"C:\Users\Tural\source\repos\Dictionary.Bot\Dictionary.Tests", "Files", "page2.html"));

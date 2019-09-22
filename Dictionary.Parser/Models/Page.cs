@@ -45,7 +45,7 @@ namespace Dictionary.Parser.Models
             HtmlNode nextPageLink = document
                 .DocumentNode
                 .SelectSingleNode("(//div[contains(@style, 'float:right')]//a[1])");
-            NextPageLink = nextPageLink.GetAttributeValue("href", null);
+            NextPageLink = nextPageLink?.GetAttributeValue("href", null);
 
             HtmlNodeCollection letterLinks = document
                 .DocumentNode
