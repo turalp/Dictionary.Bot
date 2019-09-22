@@ -12,7 +12,7 @@ namespace Dictionary.Domain.Models
 
         public override string ToString()
         {
-            return $"{Title}, {Description}";
+            return $"\"{Title}\", \"{Description}\"";
         }
     }
 }

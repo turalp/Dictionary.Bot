@@ -20,12 +20,16 @@ namespace Dictionary.Parser.Models
 
         public string NextPageLink { get; set; }
 
+        public bool HasNextPage { get; set; }
+
         public string NextLetterPageLink { get; set; }
+
+        public string Letter { get; set; }
 
         /// <summary>
         /// Words links that were found in the page.
         /// </summary>
-        public ICollection<string> WordsLinks { get; set; }
+        public IList<string> WordsLinks { get; set; }
 
         public void Parse(string page)
         {
@@ -40,20 +44,22 @@ namespace Dictionary.Parser.Models
             HtmlNodeCollection links = document
                 .DocumentNode
                 .SelectNodes("(//div[contains(@style, 'margin-bottom:1em')]//a[1])");
-            WordsLinks.Add(links);
 
-            HtmlNode nextPageLink = document
-                .DocumentNode
-                .SelectSingleNode("(//div[contains(@style, 'float:right')]//a[1])");
-            NextPageLink = nextPageLink?.GetAttributeValue("href", null);
+            if (!WordsLinks.Contains(links[0].Attributes["href"].Value))
+            {
+                WordsLinks.Add(links);
 
-            HtmlNodeCollection letterLinks = document
-                .DocumentNode
-                .SelectNodes("(//a[contains(@class, 'dict letter big')])");
-            int index = letterLinks.GetNodeIndex(letterLinks.FirstOrDefault(l => l.HasClass("active")));
-            NextLetterPageLink = index != letterLinks.Count - 1 ? 
-                letterLinks[index + 1].GetAttributeValue("href", null) : 
-                null;
+                HasNextPage = true;
+            }
+            else
+            {
+                HasNextPage = false;
+                HtmlNodeCollection letterLinks = document
+                    .DocumentNode
+                    .SelectNodes("(//a[contains(@class, 'dict letter big')])");
+                int index = letterLinks.GetNodeIndex(letterLinks.FirstOrDefault(l => l.HasClass("active")));
+                Letter = index != letterLinks.Count - 1 ? letterLinks[index + 1].InnerText : null;
+            }
         }
 
         public Word ParseWord(string page)

@@ -12,6 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dictionary.Domain\Dictionary.Domain.csproj" />
+    <ProjectReference Include="..\Dictionary.Services\Dictionary.Services.csproj" />
   </ItemGroup>
-
 </Project>

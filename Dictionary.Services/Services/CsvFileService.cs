@@ -7,9 +7,9 @@ namespace Dictionary.Services.Services
     public static class CsvFileService
     {
         private static string _path = 
-            Path.Combine(@"C:\Users\Tural\source\repos\Dictionary.Bot\", "words.csv");
+            Path.Combine(@"C:\Users\Tural\source\repos\Dictionary.Bot", "words.csv");
 
-        public static void SaveToFile(Word[] words)
+        public static void SaveToFile(List<Word> words)
         {
             using (var file = new StreamWriter(_path, true))
             {

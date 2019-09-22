@@ -7,9 +7,13 @@ namespace Dictionary.Parser.Models.Abstract
     {
         string NextPageLink { get; set; }
 
+        bool HasNextPage { get; set; }
+
+        string Letter { get; set; }
+
         string NextLetterPageLink { get; set; }
 
-        ICollection<string> WordsLinks { get; set; }
+        IList<string> WordsLinks { get; set; }
 
         void Parse(string page);
 

@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using Dictionary.Domain.Models;
-using Dictionary.Domain.Repositories;
-using Dictionary.Parser.Helpers;
 using Dictionary.Parser.Models;
 using Dictionary.Parser.Models.Abstract;
+using Dictionary.Services.Services;
 
 namespace Dictionary.Parser
 {
@@ -21,48 +19,45 @@ namespace Dictionary.Parser
         {
             Console.WriteLine("STARTING Parser...");
 
-            _page = new Page();
+            _page = new Page
+            {
+                Letter = "A"
+            };
             string domain = ConfigurationManager.AppSettings["Domain"];
             ICollection<string> links = new List<string>();
 
             using (_httpClient = new HttpClient())
             {
-                string response = _httpClient
-                    .GetStringAsync(ConfigurationManager.AppSettings["InitialUrl"])
-                    .Result;
-                _page.Parse(response);
-
                 string pageMarkup;
-                int pageNumber = 1, letter = 65;
-                while (_page.NextLetterPageLink != null)
+                int pageNumber;
+                while (_page.Letter != null)
                 {
-                    Console.WriteLine($"Processing letter {(char)letter}...");
+                    Console.WriteLine($"Processing letter {_page.Letter}...");
+                    pageNumber = 1;
                     do
                     {
                         Console.WriteLine($"Processing page #{pageNumber}");
-                        links.Add(_page.WordsLinks);
 
                         pageMarkup = _httpClient
-                            .GetStringAsync(domain + (_page.NextPageLink ?? _page.NextLetterPageLink))
+                            .GetStringAsync(
+                                domain + $"/ru/dict/exp/byletter/{_page.Letter}/?p={pageNumber}")
                             .Result;
                         _page.Parse(pageMarkup);
                         pageNumber++;
-                    } while (_page.NextPageLink != null);
-                    letter++;
-                    Thread.Sleep(10);
+                    } while (_page.HasNextPage);
+                    Thread.Sleep(2000);
                 }
 
-                foreach (string link in links)
+                List<Word> words = new List<Word>();
+                foreach (string link in _page.WordsLinks)
                 {
-                    using (var repository = new DictionaryRepository())
-                    {
-                        pageMarkup = _httpClient
-                            .GetStringAsync(domain + link)
-                            .Result;
-                        Word word = _page.ParseWord(pageMarkup);
-                        repository.InsertAsync(word).GetAwaiter().GetResult();
-                    }
+                    pageMarkup = _httpClient
+                        .GetStringAsync(domain + link)
+                        .Result;
+                    Word word = _page.ParseWord(pageMarkup);
+                    words.Add(word);
                 }
+                CsvFileService.SaveToFile(words);
 
                 Console.WriteLine($"Parser was FINISHED successfully. {links.Count} words was inserted.");
                 Console.ReadKey();
