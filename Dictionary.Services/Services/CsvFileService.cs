@@ -1,44 +1,76 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Dictionary.Domain.Models;
 
 namespace Dictionary.Services.Services
 {
     public static class CsvFileService
     {
-        private static string _path = 
-            Path.Combine(@"C:\Users\Tural\source\repos\Dictionary.Bot", "words.csv");
+        private static readonly string _path = @"C:\Users\Tural\source\repos\Dictionary.Bot\words-without-line.csv";
 
-        public static void SaveToFile(List<Word> words)
+        public static void SaveToFile(Dictionary<Word, Description> words)
         {
-            using (var file = new StreamWriter(_path, true))
+            using var file = new StreamWriter(_path, true);
+            foreach (KeyValuePair<Word, Description> word in words)
             {
-                foreach (Word word in words)
-                {
-                    file.WriteLine(word.ToString());
-                }
+                file.WriteLine("\"" + word.Key + "\"" + "," + "\"" + word.Value + "\"");
             }
         }
 
-        public static Word[] ReadFromFile()
+        public static IDictionary<string, Description[]> ReadFromFile()
         {
-            List<Word> words = new List<Word>();
-            using (var file = new StreamReader(_path))
+            IDictionary<string, ICollection<Description>> words = new Dictionary<string, ICollection<Description>>();
+            try
             {
-                while (file.ReadLine() != null)
+                using var file = new StreamReader(_path);
+                string line;
+                while ((line = file.ReadLine()) != null)
                 {
-                    string[] result = file.ReadLine()?.Split(',');
-                    Word word = new Word();
-                    if (result != null)
+                    MatchCollection matches = Regex.Matches(line, "\"(.*?)\"");
+                    string word = matches[0].Value;
+                    Description description = new Description
                     {
-                        word.Title = result[0].Trim();
-                        word.Description = result[1].Trim();
-                        words.Add(word);
+                        Content = matches[1].Value.Replace("\"", ""),
+                    };
+
+                    if (!string.IsNullOrEmpty(word) && !string.IsNullOrEmpty(description.Content))
+                    {
+                        string normalizedWord = NormalizeWord(word);
+                        if (!words.ContainsKey(normalizedWord))
+                        {
+                            words.Add(normalizedWord, new List<Description>());
+                        }
+                        words[normalizedWord].Add(description);
                     }
                 }
             }
+            catch (IOException exception)
+            {
+                Console.WriteLine($"Program was failed with message: {exception.Message}.");
+            }
+            catch (IndexOutOfRangeException exception)
+            {
+                Console.WriteLine($"Program was failed with message: {exception.Message}.");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"Program was failed with message: {exception.Message}.");
+            }
 
-            return words.ToArray();
+            return words.ToDictionary(k => k.Key, v => v.Value.ToArray());
+        }
+
+        private static string NormalizeWord(string word)
+        {
+            if (Regex.IsMatch(word, "\\p{No}"))
+            {
+                word = word.Substring(1, word.Length - 3);
+            }
+
+            return word;
         }
     }
 }

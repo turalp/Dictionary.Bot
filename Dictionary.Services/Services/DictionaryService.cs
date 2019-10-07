@@ -1,38 +1,37 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dictionary.Domain.Models;
-using Dictionary.Domain.Repositories;
+using Dictionary.Domain.Repositories.Abstract;
+using Dictionary.Services.Services.Abstract;
 
 namespace Dictionary.Services.Services
 {
-    public class DictionaryService
+    public class DictionaryService : IDictionaryService
     {
-        public async Task InsertWordsAsync(ICollection<Word> words)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public DictionaryService(IUnitOfWork unitOfWork)
         {
-            using (var repository = new DictionaryRepository())
-            {
-                words = NormalizeWords(words);
-                foreach (Word word in words)
-                {
-                    await repository.InsertAsync(word);
-                }
-            }
+            _unitOfWork = unitOfWork;
         }
 
-        private ICollection<Word> NormalizeWords(ICollection<Word> words)
+        public async Task InsertWordsAsync(IDictionary<string, Description[]> words)
         {
-            return words
-                .Select(w =>
-                {
-                    if (Regex.IsMatch(w.Title, @"\d"))
-                    {
-                        w.Title = w.Title.Substring(1);
-                    }
+            foreach (KeyValuePair<string, Description[]> word in words)
+            {
+                Word key = new Word { Title = word.Key };
+                Guid wordId = _unitOfWork.GetRepository<Word>().Insert(key);
 
-                    return w;
-                }).ToArray();
+                IRepository<Description> descriptionRepository = _unitOfWork.GetRepository<Description>();
+                foreach (Description description in word.Value)
+                {
+                    description.WordId = wordId;
+                    descriptionRepository.Insert(description);
+                }
+            }
+
+            await _unitOfWork.CommitAsync();
         }
     }
 }
