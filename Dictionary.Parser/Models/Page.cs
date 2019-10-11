@@ -18,14 +18,14 @@ namespace Dictionary.Parser.Models
             WordsLinks = new List<string>();
         }
 
-        public string NextPageLink { get; set; }
+        public bool HasNextPage { get; set; }
 
-        public string NextLetterPageLink { get; set; }
+        public string Letter { get; set; }
 
         /// <summary>
         /// Words links that were found in the page.
         /// </summary>
-        public ICollection<string> WordsLinks { get; set; }
+        public IList<string> WordsLinks { get; set; }
 
         public void Parse(string page)
         {
@@ -40,48 +40,51 @@ namespace Dictionary.Parser.Models
             HtmlNodeCollection links = document
                 .DocumentNode
                 .SelectNodes("(//div[contains(@style, 'margin-bottom:1em')]//a[1])");
-            WordsLinks.Add(links);
 
-            HtmlNode nextPageLink = document
-                .DocumentNode
-                .SelectSingleNode("(//div[contains(@style, 'float:right')]//a[1])");
-            NextPageLink = nextPageLink.GetAttributeValue("href", null);
+            if (!WordsLinks.Contains(links[0].Attributes["href"].Value))
+            {
+                WordsLinks.Add(links);
 
-            HtmlNodeCollection letterLinks = document
-                .DocumentNode
-                .SelectNodes("(//a[contains(@class, 'dict letter big')])");
-            int index = letterLinks.GetNodeIndex(letterLinks.FirstOrDefault(l => l.HasClass("active")));
-            NextLetterPageLink = index != letterLinks.Count - 1 ? 
-                letterLinks[index + 1].GetAttributeValue("href", null) : 
-                null;
+                HasNextPage = true;
+            }
+            else
+            {
+                HasNextPage = false;
+                HtmlNodeCollection letterLinks = document
+                    .DocumentNode
+                    .SelectNodes("(//a[contains(@class, 'dict letter big')])");
+                int index = letterLinks.GetNodeIndex(letterLinks.FirstOrDefault(l => l.HasClass("active")));
+                Letter = index != letterLinks.Count - 1 ? letterLinks[index + 1].InnerText : null;
+            }
         }
 
-        public Word ParseWord(string page)
+        public KeyValuePair<Word, Description> ParseWord(string page)
         {
             if (string.IsNullOrEmpty(page))
             {
                 throw new ArgumentNullException(nameof(page));
             }
 
-            Word result = new Word();
+            Word word = new Word();
+            Description description = new Description();
 
             HtmlDocument document = new HtmlDocument();
             document.LoadHtml(page);
 
-            HtmlNode word = document
+            HtmlNode htmlWordNode = document
                 .DocumentNode
                 .SelectSingleNode("(//div[contains(@itemprop, 'articleBody')]//h1[1])");
-            result.Title = word.InnerText;
+            word.Title = htmlWordNode.InnerText;
 
-            HtmlNode description = document
+            HtmlNode htmlDescriptionNode = document
                 .DocumentNode
                 .SelectSingleNode("(//div[contains(@itemprop, 'articleBody')])");
-            result.Description = description.InnerText
+            description.Content = htmlDescriptionNode.InnerText
                 .Replace("\r\n", "")
                 .Replace("  ", "")
-                .Substring(word.InnerText.Length + 1);
+                .Substring(htmlWordNode.InnerText.Length + 1);
 
-            return result;
+            return new KeyValuePair<Word, Description>(word, description);
         }
     }
 }

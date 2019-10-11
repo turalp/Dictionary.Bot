@@ -1,20 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Dictionary.Domain.Models.Abstract;
 
 namespace Dictionary.Domain.Models
 {
-    public class Word
+    [Table("Words")]
+    public class Word : IEntity
     {
         [Key]
-        public Guid WordId { get; set; }
+        [Required]
+        [Column("WordId")]
+        public Guid Id { get; set; }
         
+        [Required(ErrorMessage = "Word is required.")]
         public string Title { get; set; }
 
-        public string Description { get; set; }
+        public ICollection<Description> Descriptions { get; set; }
 
-        public override string ToString()
+        public Word()
         {
-            return $"{Title} - {Description}";
+            Descriptions = new List<Description>();
         }
     }
 }
