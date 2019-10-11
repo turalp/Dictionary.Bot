@@ -35,7 +35,7 @@ namespace Dictionary.Domain.Migrations
                         column: x => x.WordId,
                         principalTable: "Words",
                         principalColumn: "WordId",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

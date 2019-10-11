@@ -18,5 +18,10 @@ namespace Dictionary.Domain.Models
         public string Title { get; set; }
 
         public ICollection<Description> Descriptions { get; set; }
+
+        public Word()
+        {
+            Descriptions = new List<Description>();
+        }
     }
 }

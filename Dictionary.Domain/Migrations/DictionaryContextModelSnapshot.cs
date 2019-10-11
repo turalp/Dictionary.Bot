@@ -56,7 +56,7 @@ namespace Dictionary.Domain.Migrations
                     b.HasOne("Dictionary.Domain.Models.Word", "Word")
                         .WithMany("Descriptions")
                         .HasForeignKey("WordId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

@@ -89,7 +89,7 @@ namespace Dictionary.Parser
             else if (argument == "Insert")
             {
                 IDictionary<string, Description[]> words = CsvFileService.ReadFromFile();
-                _dictionaryService.InsertWordsAsync(words);
+                _dictionaryService.InsertWordsAsync(words).GetAwaiter().GetResult();
             }
             else
             {
@@ -103,7 +103,6 @@ namespace Dictionary.Parser
         private static void ConfigureServices()
         {
             var context = new DictionaryContext();
-
             context.Database.Migrate();
 
             IUnitOfWork unitOfWork = new UnitOfWork(context);

@@ -11,15 +11,14 @@ namespace Dictionary.Domain.Base
             modelBuilder.Entity<Word>()
                 .HasMany(w => w.Descriptions)
                 .WithOne(w => w.Word)
-                .HasForeignKey(w => w.WordId)
                 .HasPrincipalKey(w => w.Id)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(w => w.WordId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings[0].ConnectionString);
+            optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings[1].ConnectionString);
         }
     }
 }
