@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dictionary.Domain.Models;
 using Dictionary.Domain.Repositories.Abstract;
 using Dictionary.Services.Services.Abstract;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dictionary.Services.Services
 {
@@ -37,8 +39,16 @@ namespace Dictionary.Services.Services
 
         public async Task<Word> GetByWordAsync(string word)
         {
-            Word result = await _unitOfWork.GetRepository<Word>().GetSingleAsync(w => w.Title == word);
-            
+            IRepository<Word> wordRepository = _unitOfWork.GetRepository<Word>();
+            Word result = await wordRepository.GetSingleAsync(w => w.Title == word);
+            if (result == null)
+            {
+                Regex regex = new Regex(@"^\w+");
+                word = regex.Replace(word, "");
+
+                result = await wordRepository.GetSingleAsync(w => w.Title == word);
+            }
+
             IQueryable<Description> descriptions =
                 _unitOfWork.GetRepository<Description>().GetByCondition(d => d.WordId == result.Id);
             foreach (Description description in descriptions)
