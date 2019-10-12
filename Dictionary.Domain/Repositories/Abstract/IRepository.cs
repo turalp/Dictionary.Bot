@@ -8,6 +8,8 @@ namespace Dictionary.Domain.Repositories.Abstract
 {
     public interface IRepository<T> where T : class, IEntity
     {
+        IQueryable<T> GetAll();
+
         Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate);
 
         IQueryable<T> GetByCondition(Expression<Func<T, bool>> predicate);
