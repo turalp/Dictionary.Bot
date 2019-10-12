@@ -11,6 +11,6 @@ namespace Dictionary.Services.Services.Abstract
 
         Task<Word> GetByWordAsync(string word);
 
-        Word[] ClosestWords(string word);
+        Word[] GetClosestWords(string word);
     }
 }

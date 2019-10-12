@@ -56,7 +56,7 @@ namespace Dictionary.Services.Services
             return result;
         }
 
-        public Word[] ClosestWords(string word)
+        public Word[] GetClosestWords(string word)
         {
             IQueryable<Word> allWords = _unitOfWork.GetRepository<Word>().GetAll();
             List<Word> result = new List<Word>();

@@ -9,7 +9,7 @@ namespace Dictionary.Services.Services
 {
     public class BotService
     {
-        public static TelegramBotClient GetBot()
+        public static ITelegramBotClient GetBot()
         {
             string token = ConfigurationManager.ConnectionStrings["BotToken"].ConnectionString;
             var bot = new TelegramBotClient(token);
@@ -17,7 +17,7 @@ namespace Dictionary.Services.Services
             return bot;
         }
 
-        public static async Task Send(TelegramBotClient bot, long chatId, string message)
+        public static async Task Send(ITelegramBotClient bot, long chatId, string message)
         {
             try
             {
