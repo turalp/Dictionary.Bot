@@ -17,6 +17,11 @@ namespace Dictionary.Domain.Repositories
             _unitOfWork = unitOfWork;
         }
 
+        public IQueryable<T> GetAll()
+        {
+            return _unitOfWork.Context.Set<T>().AsQueryable();
+        }
+
         public async Task<T> GetSingleAsync(Expression<Func<T, bool>> predicate)
         {
             if (predicate == null)
@@ -24,7 +29,7 @@ namespace Dictionary.Domain.Repositories
                 throw new ArgumentNullException(nameof(predicate));
             }
 
-            return await _unitOfWork.Context.Set<T>().SingleAsync(predicate);
+            return await _unitOfWork.Context.Set<T>().SingleOrDefaultAsync(predicate);
         }
 
         public IQueryable<T> GetByCondition(Expression<Func<T, bool>> predicate)
