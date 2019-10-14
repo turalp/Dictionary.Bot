@@ -9,7 +9,9 @@ namespace Dictionary.Services.Services.Abstract
     {
         Task InsertWordsAsync(IDictionary<string, Description[]> words);
 
-        Task<Word> GetByWordAsync(string word);
+        Task<Word> GetWord(string word);
+
+        Task<Description[]> GetDescriptionByWordAsync(Word word);
 
         Word[] GetClosestWords(string word);
     }
