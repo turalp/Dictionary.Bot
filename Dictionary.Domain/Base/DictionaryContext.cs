@@ -1,4 +1,4 @@
-﻿using System.Configuration;
+using System.Configuration;
 using Dictionary.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,14 +6,26 @@ namespace Dictionary.Domain.Base
 {
     public class DictionaryContext : DbContext
     {
+        public DbSet<Word> Words { get; set; }
+
+        public DbSet<Description> Descriptions { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Word>()
-                .HasMany(w => w.Descriptions)
-                .WithOne(w => w.Word)
-                .HasPrincipalKey(w => w.Id)
-                .HasForeignKey(w => w.WordId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<FullWord>()
+                .HasKey(fw => fw.Id);
+
+            modelBuilder.Entity<FullWord>()
+                .HasOne(fw => fw.Word)
+                .WithMany(w => w.WordDescriptions)
+                .HasForeignKey(w => w.WordId);
+
+            modelBuilder.Entity<FullWord>()
+                .HasOne(fw => fw.Description)
+                .WithMany(d => d.WordDescriptions)
+                .HasForeignKey(d => d.DescriptionId);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Dictionary.Domain.Models.Abstract;
@@ -16,9 +17,11 @@ namespace Dictionary.Domain.Models
         [Required(ErrorMessage = "Description is required.")]
         public string Content { get; set; }
 
-        [ForeignKey(nameof(WordId))]
-        public Guid WordId { get; set; }
+        public ICollection<FullWord> WordDescriptions { get; set; }
 
-        public Word Word { get; set; }
+        public Description()
+        {
+            WordDescriptions = new List<FullWord>();
+        }
     }
 }
