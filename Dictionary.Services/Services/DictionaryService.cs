@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Dictionary.Domain.Models;
 using Dictionary.Domain.Repositories.Abstract;
 using Dictionary.Services.Services.Abstract;
+using User = Telegram.Bot.Types.User;
 
 namespace Dictionary.Services.Services
 {
@@ -29,7 +30,7 @@ namespace Dictionary.Services.Services
 
             foreach (KeyValuePair<string, Description[]> wordDescriptionsPair in words)
             {
-                Word word = new Word { Title = wordDescriptionsPair.Key };
+                var word = new Word { Title = wordDescriptionsPair.Key };
                 Guid wordId = await _unitOfWork.GetRepository<Word>().InsertOrUpdateAsync(word);
 
                 IRepository<Description> descriptionRepository = _unitOfWork.GetRepository<Description>();
@@ -47,6 +48,26 @@ namespace Dictionary.Services.Services
             }
 
             await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<Guid> InsertUser(User user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var telegramUser = new TelegramUser
+            {
+                UserId = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Username = user.Username,
+                LanguageCode = user.LanguageCode,
+                IsBot = user.IsBot
+            };
+
+            return await _unitOfWork.GetRepository<TelegramUser>().InsertOrUpdateAsync(telegramUser);
         }
 
         public async Task<Word> GetWord(string word)

@@ -25,7 +25,8 @@ namespace Dictionary.Bot
         {
             Console.WriteLine("Starting bot...");
             ConfigureServices();
-            _bot.OnMessage += OnMessageReceived;
+            _bot.OnMessage += OnMessageReceivedAsync;
+            _bot.OnUpdate += OnUpdateAsync;
             Console.WriteLine("Start to receive messages...");
             _bot.StartReceiving();
 
@@ -34,7 +35,7 @@ namespace Dictionary.Bot
             Console.WriteLine("Stop to receive messages...");
         }
 
-        private static async void OnMessageReceived(object sender, MessageEventArgs messageEventArgs)
+        private static async void OnMessageReceivedAsync(object sender, MessageEventArgs messageEventArgs)
         {
             Message message = messageEventArgs.Message;
             if (message == null || message.Type != MessageType.Text)
@@ -77,6 +78,14 @@ namespace Dictionary.Bot
                     word = messageParts[0];
                     await _manager.Process(chatId, word, dictionaryService: _dictionaryService);
                 }
+            }
+        }
+
+        private static async void OnUpdateAsync(object sender, UpdateEventArgs updateEventArgs)
+        {
+            foreach (User chatMember in updateEventArgs.Update.ChannelPost.NewChatMembers)
+            {
+                await _dictionaryService.InsertUser(chatMember);
             }
         }
 
