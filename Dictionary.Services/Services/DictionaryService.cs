@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dictionary.Domain.Models;
 using Dictionary.Domain.Repositories.Abstract;
-using IDictionaryService = Dictionary.Services.Services.Abstract.IDictionaryService;
+using Dictionary.Services.Services.Abstract;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dictionary.Services.Services
 {
@@ -19,51 +21,101 @@ namespace Dictionary.Services.Services
 
         public async Task InsertWordsAsync(IDictionary<string, Description[]> words)
         {
-            foreach (KeyValuePair<string, Description[]> word in words)
+            if (words == null)
             {
-                Word key = new Word { Title = word.Key };
-                Guid wordId = await _unitOfWork.GetRepository<Word>().InsertOrUpdateAsync(key);
+                throw new ArgumentNullException(nameof(words));
+            }
+
+            foreach (KeyValuePair<string, Description[]> wordDescriptionsPair in words)
+            {
+                Word word = new Word { Title = wordDescriptionsPair.Key };
+                Guid wordId = await _unitOfWork.GetRepository<Word>().InsertOrUpdateAsync(word);
 
                 IRepository<Description> descriptionRepository = _unitOfWork.GetRepository<Description>();
-                foreach (Description description in word.Value)
+                IRepository<FullWord> wordRepository = _unitOfWork.GetRepository<FullWord>();
+                foreach (Description description in wordDescriptionsPair.Value)
                 {
-                    description.WordId = wordId;
-                    await descriptionRepository.InsertOrUpdateAsync(description);
+                    Guid descriptionId = await descriptionRepository.InsertOrUpdateAsync(description);
+                    FullWord fullWord = new FullWord
+                    {
+                        DescriptionId = descriptionId,
+                        WordId = wordId,
+                    };
+                    await wordRepository.InsertOrUpdateAsync(fullWord);
                 }
             }
 
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task<Word> GetByWordAsync(string word)
+        public async Task<Word> GetWord(string word)
         {
-            IRepository<Word> wordRepository = _unitOfWork.GetRepository<Word>();
-            Word result = await wordRepository.GetSingleAsync(w => w.Title == word);
-
-            if (result == null)
+            if (string.IsNullOrEmpty(word))
             {
-                return null;
+                throw new ArgumentNullException(nameof(word));
             }
 
+            return await _unitOfWork
+                .GetRepository<Word>()
+                .GetSingleAsync(w => string.Equals(
+                    w.Title, 
+                    word, 
+                    StringComparison.OrdinalIgnoreCase));
+        }
+
+        public async Task<Description[]> GetDescriptionByWordAsync(Word word)
+        {
+            if (word == null)
+            {
+                throw new ArgumentNullException(nameof(word));
+            }
+
+            IQueryable<FullWord> fullWords = _unitOfWork
+                .GetRepository<FullWord>()
+                .GetByCondition(w => w.WordId == word.Id);
             IQueryable<Description> descriptions = _unitOfWork
                 .GetRepository<Description>()
-                .GetByCondition(d => d.WordId == result.Id);
+                .GetByCondition(d => fullWords.Any(w => w.DescriptionId == d.Id));
+
+            Regex regex = new Regex("\\d\\.");
             foreach (Description description in descriptions)
             {
-                result.Descriptions.Add(description);
+                MatchCollection matches = regex.Matches(description.Content);
+                foreach (Match match in matches)
+                {
+                    if (match.Value != "1.")
+                    {
+                        description.Content = description.Content
+                            .Replace(match.Value, "\n" + match.Value);
+                    }
+                }
             }
 
-            return result;
+            return await descriptions.ToArrayAsync();
         }
 
         public Word[] GetClosestWords(string word)
         {
+            if (string.IsNullOrEmpty(word))
+            {
+                throw new ArgumentNullException(nameof(word));
+            }
+
+            word = word.ToUpper();
             IQueryable<Word> allWords = _unitOfWork.GetRepository<Word>().GetAll();
             List<Word> result = new List<Word>();
             foreach (Word dbWord in allWords)
             {
-                int distance = CalculateEditDistance(word, dbWord.Title, word.Length, dbWord.Title.Length);
-                if (distance < 3)
+                if (dbWord.Title.Length >= word.Length + 1 || dbWord.Title.Length <= word.Length - 1)
+                {
+                    continue;
+                }
+                int distance = CalculateEditDistance(
+                    word, 
+                    dbWord.Title, 
+                    word.Length, 
+                    dbWord.Title.Length);
+                if (distance < 2)
                 {
                     result.Add(dbWord);
                 }
@@ -72,13 +124,22 @@ namespace Dictionary.Services.Services
             return result.ToArray();
         }
 
-        private int CalculateEditDistance(string firstWord, string lastWord, int firstWordIndex, int lastWordIndex)
+        private int CalculateEditDistance(string firstWord, string lastWord, int firstWordLength, int lastWordLength)
         {
-            int[,] distances = new int[firstWordIndex,lastWordIndex];
-
-            for (int i = 0; i < firstWordIndex; i++)
+            if (firstWordLength == 0)
             {
-                for (int j = 0; j < lastWordIndex; j++)
+                return lastWordLength;
+            }
+            if (lastWordLength == 0)
+            {
+                return firstWordLength;
+            }
+
+            int[,] distances = new int[firstWordLength + 1,lastWordLength + 1];
+
+            for (int i = 0; i <= firstWordLength; i++)
+            {
+                for (int j = 0; j <= lastWordLength; j++)
                 {
                     if (i == 0)
                     {
@@ -94,14 +155,28 @@ namespace Dictionary.Services.Services
                     }
                     else
                     {
-                        distances[i, j] = 1 + Math.Min(distances[i, j - 1], Math.Min(
+                        distances[i, j] = 1 + Min(distances[i, j - 1], 
                                               distances[i - 1, j], 
-                                              distances[i - 1, j - 1]));
+                                              distances[i - 1, j - 1]);
                     }
                 }
             }
 
-            return distances[firstWordIndex, lastWordIndex];
+            return distances[firstWordLength, lastWordLength];
+        }
+
+        private int Min(int x, int y, int z)
+        {
+            if (x <= y && x <= z)
+            {
+                return x;
+            }
+            if (y <= x && y <= z)
+            {
+                return y;
+            }
+            
+            return z;
         }
     }
 }
