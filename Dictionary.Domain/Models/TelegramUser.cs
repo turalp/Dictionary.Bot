@@ -7,11 +7,14 @@ using Telegram.Bot.Types;
 namespace Dictionary.Domain.Models
 {
     [Table("Users")]
-    public class User : Contact, IEntity
+    public class TelegramUser : User, IEntity
     {
         [Key]
         [Required]
         [Column("TelegramUserId")]
-        public Guid Id { get; set; }
+        public new Guid Id { get; set; }
+
+        [Required]
+        public int UserId { get; set; }
     }
 }
