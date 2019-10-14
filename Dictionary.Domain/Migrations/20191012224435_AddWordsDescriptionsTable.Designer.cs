@@ -4,14 +4,16 @@ using Dictionary.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Dictionary.Domain.Migrations
 {
     [DbContext(typeof(DictionaryContext))]
-    partial class DictionaryContextModelSnapshot : ModelSnapshot
+    [Migration("20191012224435_AddWordsDescriptionsTable")]
+    partial class AddWordsDescriptionsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,19 +37,18 @@ namespace Dictionary.Domain.Migrations
 
             modelBuilder.Entity("Dictionary.Domain.Models.FullWord", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("WordDescriptionId");
+                    b.Property<Guid>("WordId");
 
                     b.Property<Guid>("DescriptionId");
 
-                    b.Property<Guid>("WordId");
+                    b.Property<Guid>("Id")
+                        .HasColumnName("WordDescriptionId");
 
-                    b.HasKey("Id");
+                    b.HasKey("WordId", "DescriptionId");
+
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("DescriptionId");
-
-                    b.HasIndex("WordId");
 
                     b.ToTable("WordsDescriptions");
                 });
@@ -56,7 +57,7 @@ namespace Dictionary.Domain.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("TelegramUserId");
+                        .HasColumnName("UserId");
 
                     b.Property<string>("FirstName");
 
@@ -64,7 +65,8 @@ namespace Dictionary.Domain.Migrations
 
                     b.Property<string>("PhoneNumber");
 
-                    b.Property<int>("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnName("UserId1");
 
                     b.Property<string>("Vcard");
 

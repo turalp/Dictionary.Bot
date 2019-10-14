@@ -17,11 +17,11 @@ namespace Dictionary.Domain.Models
         [Required(ErrorMessage = "Word is required.")]
         public string Title { get; set; }
 
-        public ICollection<Description> Descriptions { get; set; }
+        public ICollection<FullWord> WordDescriptions { get; set; }
 
         public Word()
         {
-            Descriptions = new List<Description>();
+            WordDescriptions = new List<FullWord>();
         }
     }
 }
