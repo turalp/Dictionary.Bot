@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using Dictionary.Bot.Commands.Abstract;
 using Dictionary.Bot.Commands.Responses;
@@ -12,22 +13,30 @@ namespace Dictionary.Bot.Commands
     {
         public async Task<ICommandResponse> ExecuteAsync(long chatId, string args, IDictionaryService dictionaryService)
         {
-            Word word = await dictionaryService.GetByWordAsync(args);
+            if (string.IsNullOrEmpty(args))
+            {
+                throw new ArgumentNullException();
+            }
+
+            Word word = await dictionaryService.GetWord(args);
             if (word == null)
             {
                 Word[] closestWords = dictionaryService.GetClosestWords(args);
-                StringBuilder words = new StringBuilder("Word was not found. Maybe you meant:");
+                StringBuilder words = new StringBuilder("Word was not found. Maybe you meant:\n");
                 foreach (Word closestWord in closestWords)
                 {
-                    words.AppendLine("/" + closestWord.Title);
+                    words.AppendLine("/" + closestWord.Title.ToLower());
                 }
 
                 return new TextResponse(words.ToString());
             }
 
             StringBuilder textDescription = new StringBuilder();
-            foreach (Description description in word.Descriptions)
+            Description[] descriptions = await dictionaryService.GetDescriptionByWordAsync(word);
+            
+            foreach (Description description in descriptions)
             {
+                textDescription.Append("• ");
                 textDescription.AppendLine(description.Content);
             }
 

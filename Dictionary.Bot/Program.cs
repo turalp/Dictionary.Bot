@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dictionary.Domain.Base;
+using Dictionary.Domain.Constants;
 using Dictionary.Domain.Repositories;
 using Dictionary.Domain.Repositories.Abstract;
 using Dictionary.Services.Services;
@@ -21,12 +23,15 @@ namespace Dictionary.Bot
 
         static void Main(string[] args)
         {
+            Console.WriteLine("Starting bot...");
             ConfigureServices();
             _bot.OnMessage += OnMessageReceived;
+            Console.WriteLine("Start to receive messages...");
             _bot.StartReceiving();
 
             Task.Delay(-1).Wait();
             _bot.StopReceiving();
+            Console.WriteLine("Stop to receive messages...");
         }
 
         private static async void OnMessageReceived(object sender, MessageEventArgs messageEventArgs)
@@ -37,12 +42,12 @@ namespace Dictionary.Bot
                 Console.WriteLine("Message type is not relevant for processing.");
                 return;
             }
-
+            
             string[] messageParts = message.Text.Split(' ');
             string word;
             long chatId = message.Chat.Id;
             int messagePartsLength = messageParts.Length;
-
+            
             if (messagePartsLength > 2)
             {
                 Console.WriteLine("Message has too much words to explain. Please, send one word to get explanation.");
@@ -57,14 +62,22 @@ namespace Dictionary.Bot
                     return;
                 }
 
-                string command = messageParts[0];
                 word = messageParts[1];
 
-                await _manager.Process(chatId, word, command, _dictionaryService);
+                await _manager.Process(chatId, word, messageParts[0], _dictionaryService);
             }
-
-            word = messageParts[0];
-            await _manager.Process(chatId, word, dictionaryService: _dictionaryService);
+            else
+            {
+                if (BotCommands.Explain.Contains(messageParts[0]) || BotCommands.Help.Contains(messageParts[0]))
+                {
+                    await _manager.Process(chatId, null, messageParts[0], _dictionaryService);
+                }
+                else
+                {
+                    word = messageParts[0];
+                    await _manager.Process(chatId, word, dictionaryService: _dictionaryService);
+                }
+            }
         }
 
         private static void ConfigureServices()
