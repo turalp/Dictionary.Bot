@@ -11,7 +11,7 @@ namespace Dictionary.Services.Services.Abstract
 
         Task<Word> GetWord(string word);
 
-        Task<Description[]> GetDescriptionByWordAsync(Word word);
+        Task<string> GetDescriptionByWordAsync(Word word);
 
         Word[] GetClosestWords(string word);
     }

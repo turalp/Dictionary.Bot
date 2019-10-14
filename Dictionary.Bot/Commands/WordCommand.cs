@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dictionary.Bot.Commands.Abstract;
 using Dictionary.Bot.Commands.Responses;
@@ -25,22 +26,14 @@ namespace Dictionary.Bot.Commands
                 StringBuilder words = new StringBuilder("Word was not found. Maybe you meant:\n");
                 foreach (Word closestWord in closestWords)
                 {
-                    words.AppendLine("/" + closestWord.Title.ToLower());
+                    words.AppendLine("• " + closestWord.Title.ToLower());
                 }
 
                 return new TextResponse(words.ToString());
             }
 
-            StringBuilder textDescription = new StringBuilder();
-            Description[] descriptions = await dictionaryService.GetDescriptionByWordAsync(word);
-            
-            foreach (Description description in descriptions)
-            {
-                textDescription.Append("• ");
-                textDescription.AppendLine(description.Content);
-            }
-
-            return new TextResponse(textDescription.ToString());
+            string descriptions = await dictionaryService.GetDescriptionByWordAsync(word);
+            return new TextResponse(descriptions);
         }
     }
 }

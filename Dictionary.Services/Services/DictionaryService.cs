@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dictionary.Domain.Models;
 using Dictionary.Domain.Repositories.Abstract;
 using Dictionary.Services.Services.Abstract;
-using Microsoft.EntityFrameworkCore;
 
 namespace Dictionary.Services.Services
 {
@@ -57,13 +58,14 @@ namespace Dictionary.Services.Services
 
             return await _unitOfWork
                 .GetRepository<Word>()
-                .GetSingleAsync(w => string.Equals(
+                .GetSingleAsync(w => string.Compare(
                     w.Title, 
                     word, 
-                    StringComparison.OrdinalIgnoreCase));
+                    new CultureInfo("az-Latn-AZ"),
+                    CompareOptions.IgnoreCase) == 0);
         }
 
-        public async Task<Description[]> GetDescriptionByWordAsync(Word word)
+        public async Task<string> GetDescriptionByWordAsync(Word word)
         {
             if (word == null)
             {
@@ -77,21 +79,29 @@ namespace Dictionary.Services.Services
                 .GetRepository<Description>()
                 .GetByCondition(d => fullWords.Any(w => w.DescriptionId == d.Id));
 
-            Regex regex = new Regex("\\d\\.");
+            StringBuilder descriptionAsText = new StringBuilder();
             foreach (Description description in descriptions)
             {
-                MatchCollection matches = regex.Matches(description.Content);
+                MatchCollection matches = Regex.Matches(description.Content, @"[2-9]\.");
+                StringBuilder descriptionContent = new StringBuilder(description.Content);
                 foreach (Match match in matches)
                 {
-                    if (match.Value != "1.")
-                    {
-                        description.Content = description.Content
-                            .Replace(match.Value, "\n" + match.Value);
-                    }
+                    descriptionContent = descriptionContent
+                        .Replace(match.Value, "\n" + match.Value)
+                        .Replace("\n\n", "\n");
                 }
+                
+                string builtDescription = Regex.Replace(
+                    descriptionContent.ToString(),
+                    @"^\s+$[\r\n]*",
+                    string.Empty,
+                    RegexOptions.Multiline);
+
+                descriptionAsText.Append("\n• ");
+                descriptionAsText.AppendLine(builtDescription);
             }
 
-            return await descriptions.ToArrayAsync();
+            return descriptionAsText.ToString();
         }
 
         public Word[] GetClosestWords(string word)
