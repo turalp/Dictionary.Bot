@@ -33,17 +33,20 @@ namespace Dictionary.Services.Services
                     string word = matches[0].Value;
                     Description description = new Description
                     {
-                        Content = matches[1].Value.Replace("\"", ""),
+                        Content = NormalizeDescription(matches[1].Value),
                     };
 
                     if (!string.IsNullOrEmpty(word) && !string.IsNullOrEmpty(description.Content))
                     {
-                        string normalizedWord = NormalizeWord(word);
-                        if (!words.ContainsKey(normalizedWord))
+                        string[] normalizedWords = NormalizeWords(word);
+                        foreach (string normalizedWord in normalizedWords)
                         {
-                            words.Add(normalizedWord, new List<Description>());
+                            if (!words.ContainsKey(normalizedWord))
+                            {
+                                words.Add(normalizedWord, new List<Description>());
+                            }
+                            words[normalizedWord].Add(description);
                         }
-                        words[normalizedWord].Add(description);
                     }
                 }
             }
@@ -63,14 +66,34 @@ namespace Dictionary.Services.Services
             return words.ToDictionary(k => k.Key, v => v.Value.ToArray());
         }
 
-        private static string NormalizeWord(string word)
+        private static string[] NormalizeWords(string word)
         {
+            List<string> words = new List<string>();
+            word = word.Replace("\"", "");
             if (Regex.IsMatch(word, "\\p{No}"))
             {
-                word = word.Substring(1, word.Length - 3);
+                word = word
+                    .Substring(0, word.Length - 1);
+            }
+            
+            Regex regex = new Regex("\\([a-zA-Z]+\\)");
+            if (regex.IsMatch(word))
+            {
+                words.Add(word.Replace("(", "").Replace(")", ""));
+                words.Add(regex.Replace(word, ""));
+            }
+            else
+            {
+                words.Add(word);
             }
 
-            return word;
+            return words.ToArray();
         }
+
+        private static string NormalizeDescription(string description) => 
+            description
+                .Replace("\"", "")
+                .Replace("b a x ", "bax /")
+                .Replace("bax ", "bax /");
     }
 }
