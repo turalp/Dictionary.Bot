@@ -124,7 +124,7 @@
     <value>Sözün izahını almaq üçün /e, /explain, /i, /izah [söz] sintaksisi istifadə edin.</value>
   </data>
   <data name="ExplainMessage" xml:space="preserve">
-    <value>Sözün izahılı almaq üçün onu göndərməyə yetərlidir.</value>
+    <value>Sözün izahını almaq üçün onu göndərmək yetərlidir.</value>
   </data>
   <data name="HelpMessage" xml:space="preserve">
     <value>Botun istifadə qaydalarını baxmaq üçün /h, /help, /k, /kömək yazın.</value>
