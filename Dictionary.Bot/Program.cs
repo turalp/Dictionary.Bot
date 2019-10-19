@@ -23,15 +23,15 @@ namespace Dictionary.Bot
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Starting bot...");
+            Console.WriteLine(@"Starting bot...");
             ConfigureServices();
             _bot.OnMessage += OnMessageReceivedAsync;
-            Console.WriteLine("Start to receive messages...");
+            Console.WriteLine(@"Start to receive messages...");
             _bot.StartReceiving();
 
             Task.Delay(-1).Wait();
             _bot.StopReceiving();
-            Console.WriteLine("Stop to receive messages...");
+            Console.WriteLine(@"Stop to receive messages...");
         }
 
         private static async void OnMessageReceivedAsync(object sender, MessageEventArgs messageEventArgs)
@@ -39,11 +39,9 @@ namespace Dictionary.Bot
             Message message = messageEventArgs.Message;
             if (message == null)
             {
-                Console.WriteLine("Message is null.");
+                Console.WriteLine(@"Message is null.");
                 return;
             }
-
-            await AddNewChatMembers(message.NewChatMembers);
             
             long chatId = message.Chat.Id;
             await _bot.SendChatActionAsync(chatId, ChatAction.Typing);
@@ -92,17 +90,6 @@ namespace Dictionary.Bot
                 {
                     word = messageParts[0];
                     await _manager.Process(chatId, word, dictionaryService: _dictionaryService);
-                }
-            }
-        }
-
-        private static async Task AddNewChatMembers(User[] chatMembers)
-        {
-            if (chatMembers != null && chatMembers.Length != 0)
-            {
-                foreach (User chatMember in chatMembers)
-                {
-                    await _dictionaryService.InsertUser(chatMember);
                 }
             }
         }

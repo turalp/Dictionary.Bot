@@ -10,8 +10,6 @@ namespace Dictionary.Domain.Base
 
         public DbSet<Description> Descriptions { get; set; }
 
-        public DbSet<TelegramUser> Users { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<FullWord>()
@@ -30,8 +28,7 @@ namespace Dictionary.Domain.Base
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings[1].ConnectionString);
-            optionsBuilder.UseSqlServer("Data Source=LAPTOP-A41SUOC9;Initial Catalog=Dictionary;Integrated Security=SSPI;");
+            optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings[1].ConnectionString);
         }
     }
 }

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Dictionary.Domain.Models;
 using Dictionary.Domain.Repositories.Abstract;
 using Dictionary.Services.Services.Abstract;
-using User = Telegram.Bot.Types.User;
 
 namespace Dictionary.Services.Services
 {
@@ -48,26 +47,6 @@ namespace Dictionary.Services.Services
             }
 
             await _unitOfWork.CommitAsync();
-        }
-
-        public async Task<Guid> InsertUser(User user)
-        {
-            if (user == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            var telegramUser = new TelegramUser
-            {
-                UserId = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Username = user.Username,
-                LanguageCode = user.LanguageCode,
-                IsBot = user.IsBot,
-            };
-
-            return await _unitOfWork.GetRepository<TelegramUser>().InsertOrUpdateAsync(telegramUser);
         }
 
         public async Task<Word> GetWord(string word)
