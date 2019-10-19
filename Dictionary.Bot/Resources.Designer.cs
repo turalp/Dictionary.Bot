@@ -79,7 +79,7 @@ namespace Dictionary.Bot {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sözün izahılı almaq üçün onu göndərməyə yetərlidir..
+        ///   Looks up a localized string similar to Sözün izahını almaq üçün onu göndərmək yetərlidir..
         /// </summary>
         internal static string ExplainMessage {
             get {
