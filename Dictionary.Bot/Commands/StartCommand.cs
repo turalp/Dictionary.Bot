@@ -6,13 +6,11 @@ using Dictionary.Services.Services.Abstract;
 
 namespace Dictionary.Bot.Commands
 {
-    public class HelpCommand : ICommand
+    public class StartCommand : ICommand
     {
         public async Task<ICommandResponse> ExecuteAsync(long chatId, string args, IDictionaryService dictionaryService = null)
         {
-            return await Task.Run(() => new TextResponse($"{Resources.ExplainMessage}\r\n" +
-                                                         $"{Resources.ExplainCommandMessage}\r\n" +
-                                                         $"{Resources.HelpMessage}"));
+            return await Task.Run(() => new TextResponse(Resources.StartMessage));
         }
     }
 }

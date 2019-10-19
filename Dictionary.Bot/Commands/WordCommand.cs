@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dictionary.Bot.Commands.Abstract;
 using Dictionary.Bot.Commands.Responses;
@@ -23,7 +22,11 @@ namespace Dictionary.Bot.Commands
             if (word == null)
             {
                 Word[] closestWords = dictionaryService.GetClosestWords(args);
-                StringBuilder words = new StringBuilder("Word was not found. Maybe you meant:\n");
+                if (closestWords.Length == 0)
+                {
+                    return new TextResponse(Resources.NoWordMessage);
+                }
+                StringBuilder words = new StringBuilder(Resources.WordMismatchMessage + "\n");
                 foreach (Word closestWord in closestWords)
                 {
                     words.AppendLine("• " + closestWord.Title.ToLower());

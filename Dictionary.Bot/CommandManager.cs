@@ -19,6 +19,7 @@ namespace Dictionary.Bot
         {
             { BotCommands.Help, new HelpCommand() },
             { BotCommands.Explain, new WordCommand() },
+            { BotCommands.Start, new StartCommand() },
         };
 
         public CommandManager(ITelegramBotClient bot)
@@ -37,7 +38,7 @@ namespace Dictionary.Bot
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
-                await BotService.Send(_bot, chatId, "Invalid message.");
+                await BotService.Send(_bot, chatId, Resources.ExceptionMessage);
             }
         }
 

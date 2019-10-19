@@ -64,7 +64,7 @@ namespace Dictionary.Services.Services
                 LastName = user.LastName,
                 Username = user.Username,
                 LanguageCode = user.LanguageCode,
-                IsBot = user.IsBot
+                IsBot = user.IsBot,
             };
 
             return await _unitOfWork.GetRepository<TelegramUser>().InsertOrUpdateAsync(telegramUser);
@@ -77,13 +77,15 @@ namespace Dictionary.Services.Services
                 throw new ArgumentNullException(nameof(word));
             }
 
+            CultureInfo cultureInfo = new CultureInfo("az-Latn-AZ");
             return await _unitOfWork
                 .GetRepository<Word>()
-                .GetSingleAsync(w => string.Compare(
-                    w.Title, 
-                    word, 
-                    new CultureInfo("az-Latn-AZ"),
-                    CompareOptions.IgnoreCase) == 0);
+                .GetSingleAsync(w =>
+                    string.Compare(
+                        w.Title,
+                        word.ToUpper(cultureInfo),
+                        cultureInfo,
+                        CompareOptions.None) == 0);
         }
 
         public async Task<string> GetDescriptionByWordAsync(Word word)

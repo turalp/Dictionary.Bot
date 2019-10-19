@@ -26,7 +26,6 @@ namespace Dictionary.Bot
             Console.WriteLine("Starting bot...");
             ConfigureServices();
             _bot.OnMessage += OnMessageReceivedAsync;
-            _bot.OnUpdate += OnUpdateAsync;
             Console.WriteLine("Start to receive messages...");
             _bot.StartReceiving();
 
@@ -38,28 +37,42 @@ namespace Dictionary.Bot
         private static async void OnMessageReceivedAsync(object sender, MessageEventArgs messageEventArgs)
         {
             Message message = messageEventArgs.Message;
-            if (message == null || message.Type != MessageType.Text)
+            if (message == null)
             {
-                Console.WriteLine("Message type is not relevant for processing.");
+                Console.WriteLine("Message is null.");
                 return;
             }
+
+            await AddNewChatMembers(message.NewChatMembers);
             
+            long chatId = message.Chat.Id;
+            await _bot.SendChatActionAsync(chatId, ChatAction.Typing);
+
+            await ProcessMessageParts(message, chatId);
+        }
+
+        private static async Task ProcessMessageParts(Message message, long chatId)
+        {
+            if (message.Type != MessageType.Text)
+            {
+                await BotService.Send(_bot, chatId, Resources.TypeMismatchMessage);
+                return;
+            }
+
             string[] messageParts = message.Text.Split(' ');
             string word;
-            long chatId = message.Chat.Id;
             int messagePartsLength = messageParts.Length;
-            
             if (messagePartsLength > 2)
             {
-                Console.WriteLine("Message has too much words to explain. Please, send one word to get explanation.");
+                await BotService.Send(_bot, chatId, Resources.WrongCountMessage);
                 return;
             }
-            
+
             if (messagePartsLength == 2)
             {
                 if (!messageParts[0].StartsWith('/'))
                 {
-                    Console.WriteLine("Message has too much words to explain. Please, send one word to get explanation.");
+                    await BotService.Send(_bot, chatId, Resources.WrongCountMessage);
                     return;
                 }
 
@@ -69,7 +82,9 @@ namespace Dictionary.Bot
             }
             else
             {
-                if (BotCommands.Explain.Contains(messageParts[0]) || BotCommands.Help.Contains(messageParts[0]))
+                if (BotCommands.Explain.Contains(messageParts[0]) || 
+                    BotCommands.Help.Contains(messageParts[0]) ||
+                    BotCommands.Start.Contains(messageParts[0]))
                 {
                     await _manager.Process(chatId, null, messageParts[0], _dictionaryService);
                 }
@@ -81,11 +96,14 @@ namespace Dictionary.Bot
             }
         }
 
-        private static async void OnUpdateAsync(object sender, UpdateEventArgs updateEventArgs)
+        private static async Task AddNewChatMembers(User[] chatMembers)
         {
-            foreach (User chatMember in updateEventArgs.Update.ChannelPost.NewChatMembers)
+            if (chatMembers != null && chatMembers.Length != 0)
             {
-                await _dictionaryService.InsertUser(chatMember);
+                foreach (User chatMember in chatMembers)
+                {
+                    await _dictionaryService.InsertUser(chatMember);
+                }
             }
         }
 
