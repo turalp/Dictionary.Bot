@@ -20,6 +20,7 @@ namespace Dictionary.Bot
         private static ITelegramBotClient _bot;
         private static ICommandManager _manager;
         private static IDictionaryService _dictionaryService;
+        private static ILogService _logService;
 
         static void Main(string[] args)
         {
@@ -101,8 +102,9 @@ namespace Dictionary.Bot
 
             IUnitOfWork unitOfWork = new UnitOfWork(context);
             _dictionaryService = new DictionaryService(unitOfWork);
+            _logService = new LogService(unitOfWork);
             _bot = BotService.GetBot();
-            _manager = new CommandManager(_bot, _dictionaryService);
+            _manager = new CommandManager(_bot, _dictionaryService, _logService);
         }
     }
 }

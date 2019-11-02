@@ -16,6 +16,8 @@ namespace Dictionary.Domain.Repositories.Abstract
 
         Task DeleteAsync(Guid entityId);
 
+        void DeleteRange(T[] entities);
+
         Task<Guid> InsertOrUpdateAsync(T entity);
     }
 }
