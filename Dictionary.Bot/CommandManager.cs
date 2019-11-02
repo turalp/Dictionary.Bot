@@ -15,6 +15,7 @@ namespace Dictionary.Bot
     public class CommandManager : ICommandManager
     {
         private readonly ITelegramBotClient _bot;
+        private readonly ILogService _logService;
         private static IDictionaryService _dictionaryService;
         private readonly IDictionary<string[], ICommand> _commands = new Dictionary<string[], ICommand>
         {
@@ -23,10 +24,14 @@ namespace Dictionary.Bot
             { BotCommands.Start, new StartCommand() },
         };
 
-        public CommandManager(ITelegramBotClient bot, IDictionaryService dictionaryService)
+        public CommandManager(
+            ITelegramBotClient bot, 
+            IDictionaryService dictionaryService, 
+            ILogService logService)
         {
             _bot = bot;
             _dictionaryService = dictionaryService;
+            _logService = logService;
         }
 
         public async Task Process(long chatId, string word, string commandName = null)
@@ -39,7 +44,7 @@ namespace Dictionary.Bot
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception);
+                await _logService.WriteLogAsync(exception);
                 await BotService.Send(_bot, chatId, Resources.ExceptionMessage);
             }
         }

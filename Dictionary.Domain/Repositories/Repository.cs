@@ -51,6 +51,16 @@ namespace Dictionary.Domain.Repositories
             }
         }
 
+        public void DeleteRange(T[] entities)
+        {
+            if (entities == null || entities.Length == 0)
+            {
+                throw new ArgumentException(nameof(entities));
+            }
+
+            _unitOfWork.Context.Set<T>().RemoveRange(entities);
+        }
+
         public async Task<Guid> InsertOrUpdateAsync(T entity)
         {
             if (entity == null)
