@@ -76,7 +76,7 @@ namespace Dictionary.Bot
 
                 word = messageParts[1];
 
-                await _manager.Process(chatId, word, messageParts[0], _dictionaryService);
+                await _manager.Process(chatId, word, messageParts[0]);
             }
             else
             {
@@ -84,12 +84,12 @@ namespace Dictionary.Bot
                     BotCommands.Help.Contains(messageParts[0]) ||
                     BotCommands.Start.Contains(messageParts[0]))
                 {
-                    await _manager.Process(chatId, null, messageParts[0], _dictionaryService);
+                    await _manager.Process(chatId, null, messageParts[0]);
                 }
                 else
                 {
                     word = messageParts[0];
-                    await _manager.Process(chatId, word, dictionaryService: _dictionaryService);
+                    await _manager.Process(chatId, word);
                 }
             }
         }
@@ -102,7 +102,7 @@ namespace Dictionary.Bot
             IUnitOfWork unitOfWork = new UnitOfWork(context);
             _dictionaryService = new DictionaryService(unitOfWork);
             _bot = BotService.GetBot();
-            _manager = new CommandManager(_bot);
+            _manager = new CommandManager(_bot, _dictionaryService);
         }
     }
 }
