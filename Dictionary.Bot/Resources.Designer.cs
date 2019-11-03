@@ -61,6 +61,15 @@ namespace Dictionary.Bot {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to @tur_alp.
+        /// </summary>
+        internal static string ContactMessage {
+            get {
+                return ResourceManager.GetString("ContactMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sözün izahını axtarılan zaman səhv oldu. Mesajı təkrar göndərin. .
         /// </summary>
         internal static string ExceptionMessage {
@@ -102,6 +111,15 @@ namespace Dictionary.Bot {
         internal static string NoWordMessage {
             get {
                 return ResourceManager.GetString("NoWordMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Proqramçıya yazmaq üçün /r, /report, /y, /yaz istifadə edin..
+        /// </summary>
+        internal static string ReportMessage {
+            get {
+                return ResourceManager.GetString("ReportMessage", resourceCulture);
             }
         }
         

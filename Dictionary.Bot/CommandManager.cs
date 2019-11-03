@@ -20,8 +20,8 @@ namespace Dictionary.Bot
         private readonly IDictionary<string[], ICommand> _commands = new Dictionary<string[], ICommand>
         {
             { BotCommands.Help, new HelpCommand() },
-            { BotCommands.Explain, new WordCommand(_dictionaryService) },
             { BotCommands.Start, new StartCommand() },
+            { BotCommands.Report, new ReportCommand() },
         };
 
         public CommandManager(

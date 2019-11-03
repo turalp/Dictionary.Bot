@@ -81,11 +81,15 @@ namespace Dictionary.Bot
             }
             else
             {
-                if (BotCommands.Explain.Contains(messageParts[0]) || 
-                    BotCommands.Help.Contains(messageParts[0]) ||
-                    BotCommands.Start.Contains(messageParts[0]))
+                if (BotCommands.Help.Contains(messageParts[0]) ||
+                    BotCommands.Start.Contains(messageParts[0]) ||
+                    BotCommands.Report.Contains(messageParts[0]))
                 {
                     await _manager.Process(chatId, null, messageParts[0]);
+                }
+                else if (BotCommands.Explain.Contains(messageParts[0]))
+                {
+                    await BotService.Send(_bot, chatId, Resources.ExplainCommandMessage);
                 }
                 else
                 {
