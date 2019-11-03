@@ -11,7 +11,8 @@ namespace Dictionary.Bot.Commands
         {
             return await Task.Run(() => new TextResponse($"{Resources.ExplainMessage}\r\n" +
                                                          $"{Resources.ExplainCommandMessage}\r\n" +
-                                                         $"{Resources.HelpMessage}"));
+                                                         $"{Resources.HelpMessage}\r\n" +
+                                                         $"{Resources.ReportMessage}"));
         }
     }
 }

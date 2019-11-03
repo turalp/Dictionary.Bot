@@ -7,5 +7,7 @@
         public static string[] Explain = { "/e", "/explain", "/i", "/izah" };
 
         public static string[] Start = { "/s", "/start" };
+
+        public static string[] Report = { "/r", "/report", "/y", "/yaz" };
     }
 }
