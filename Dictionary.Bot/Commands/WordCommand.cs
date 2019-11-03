@@ -25,7 +25,7 @@ namespace Dictionary.Bot.Commands
                 throw new ArgumentNullException();
             }
 
-            Word word = await _dictionaryService.GetWord(args);
+            Word word = await _dictionaryService.GetWordAsync(args);
             if (word == null)
             {
                 Word[] closestWords = _dictionaryService.GetClosestWords(args);

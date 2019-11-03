@@ -8,7 +8,7 @@ namespace Dictionary.Services.Services.Abstract
     {
         Task InsertWordsAsync(IDictionary<string, Description[]> words);
 
-        Task<Word> GetWord(string word);
+        Task<Word> GetWordAsync(string word);
 
         Task<string> GetDescriptionByWordAsync(Word word);
 

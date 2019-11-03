@@ -49,7 +49,7 @@ namespace Dictionary.Services.Services
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task<Word> GetWord(string word)
+        public async Task<Word> GetWordAsync(string word)
         {
             if (string.IsNullOrEmpty(word))
             {
