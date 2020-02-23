@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Tural\.nuget\packages\nunit3testadapter\3.11.0\build\netcoreapp1.0\nunit.engine.netstandard.dll" t="Include" />
+    <e p="C:\Users\Tural\.nuget\packages\nunit3testadapter\3.11.0\build\netcoreapp1.0\NUnit3.TestAdapter.dll" t="Include" />
+    <e p="C:\Users\Tural\.nuget\packages\nunit3testadapter\3.11.0\build\netcoreapp1.0\NUnit3.TestAdapter.pdb" t="Include" />
+    <e p="C:\Users\Tural\.Rider2019.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Tural\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_Dictionary.Bot.1957251565.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Tural\source\repos\Dictionary.Bot" t="IncludeFlat">
+      <e p="Dictionary.Bot" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="CommandManager.cs" t="Include" />
+        <e p="Commands" t="Include">
+          <e p="Abstract" t="Include">
+            <e p="ICommand.cs" t="Include" />
+          </e>
+          <e p="HelpCommand.cs" t="Include" />
+          <e p="Responses" t="Include">
+            <e p="Abstract" t="Include">
+              <e p="ICommandResponse.cs" t="Include" />
+            </e>
+            <e p="TextResponse.cs" t="Include" />
+          </e>
+          <e p="StartCommand.cs" t="Include" />
+          <e p="WordCommand.cs" t="Include" />
+        </e>
+        <e p="Dictionary.Bot.csproj" t="IncludeRecursive" />
+        <e p="ICommandManager.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.2" t="Include">
+              <e p="Dictionary.Bot.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Program.cs" t="Include" />
+        <e p="Resources.Designer.cs" t="Include" />
+        <e p="Resources.resx" t="Include" />
+      </e>
+      <e p="Dictionary.Bot.sln" t="IncludeFlat" />
+      <e p="Dictionary.Domain" t="IncludeRecursive">
+        <e p="Base" t="Include">
+          <e p="DictionaryContext.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Constants" t="Include">
+          <e p="BotCommands.cs" t="Include" />
+        </e>
+        <e p="Dictionary.Domain.csproj" t="IncludeRecursive" />
+        <e p="Migrations" t="Include">
+          <e p="20191007195058_InitialCreate.cs" t="Include" />
+          <e p="20191007195058_InitialCreate.Designer.cs" t="Include" />
+          <e p="20191012224435_AddWordsDescriptionsTable.cs" t="Include" />
+          <e p="20191012224435_AddWordsDescriptionsTable.Designer.cs" t="Include" />
+          <e p="20191012225420_ChangePrimaryKeyInWordDescription.cs" t="Include" />
+          <e p="20191012225420_ChangePrimaryKeyInWordDescription.Designer.cs" t="Include" />
+          <e p="20191014180653_ChangedUserEntity.cs" t="Include" />
+          <e p="20191014180653_ChangedUserEntity.Designer.cs" t="Include" />
+          <e p="20191014180957_AddedIntegerUserId.cs" t="Include" />
+          <e p="20191014180957_AddedIntegerUserId.Designer.cs" t="Include" />
+          <e p="20191019132008_DeleteUserTable.cs" t="Include" />
+          <e p="20191019132008_DeleteUserTable.Designer.cs" t="Include" />
+          <e p="DictionaryContextModelSnapshot.cs" t="Include" />
+        </e>
+        <e p="Models" t="Include">
+          <e p="Abstract" t="Include">
+            <e p="IEntity.cs" t="Include" />
+          </e>
+          <e p="Description.cs" t="Include" />
+          <e p="FullWord.cs" t="Include" />
+          <e p="Word.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netstandard2.0" t="Include">
+              <e p="Dictionary.Domain.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Repositories" t="Include">
+          <e p="Abstract" t="Include">
+            <e p="IRepository.cs" t="Include" />
+            <e p="IUnitOfWork.cs" t="Include" />
+          </e>
+          <e p="Repository.cs" t="Include" />
+          <e p="UnitOfWork.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Dictionary.Services" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Dictionary.Services.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netstandard2.0" t="Include">
+              <e p="Dictionary.Services.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Services" t="Include">
+          <e p="Abstract" t="Include">
+            <e p="IDictionaryService.cs" t="Include" />
+          </e>
+          <e p="BotService.cs" t="Include" />
+          <e p="DictionaryService.cs" t="Include" />
+        </e>
+      </e>
+      <e p="Dictionary.Tests" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Dictionary.Tests.csproj" t="IncludeRecursive" />
+        <e p="DictionaryServiceTests.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.2" t="Include">
+              <e p="Dictionary.Tests.AssemblyInfo.cs" t="Include" />
+              <e p="Dictionary.Tests.Program.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>

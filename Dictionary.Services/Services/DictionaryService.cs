@@ -118,10 +118,11 @@ namespace Dictionary.Services.Services
             List<Word> result = new List<Word>();
             foreach (Word dbWord in allWords)
             {
-                if (dbWord.Title.Length >= word.Length + 1 || dbWord.Title.Length <= word.Length - 1)
+                if (dbWord.Title.Length > word.Length + 1 || dbWord.Title.Length < word.Length - 1)
                 {
                     continue;
                 }
+                
                 int distance = CalculateEditDistance(
                     word, 
                     dbWord.Title, 

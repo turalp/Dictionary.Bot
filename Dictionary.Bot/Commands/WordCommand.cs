@@ -33,7 +33,7 @@ namespace Dictionary.Bot.Commands
                 {
                     return new TextResponse(Resources.NoWordMessage);
                 }
-                StringBuilder words = new StringBuilder(Resources.WordMismatchMessage + "\n");
+                var words = new StringBuilder(Resources.WordMismatchMessage + "\n");
                 foreach (Word closestWord in closestWords)
                 {
                     words.AppendLine("• " + closestWord.Title.ToLower());
